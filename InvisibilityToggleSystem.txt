@@ -12,16 +12,22 @@ local toggleEvent = ReplicatedStorage:WaitForChild("ToggleInvisibility")
 local player = Players.LocalPlayer
 
 -- GUI Button
-local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-local Button = Instance.new("TextButton", ScreenGui)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "InvisibilityGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
+local Button = Instance.new("TextButton")
+Button.Name = "ToggleInvisibilityButton"
 Button.Size = UDim2.new(0, 200, 0, 50)
-Button.Position = UDim2.new(0.5, -100, 0.9, 0)
+Button.Position = UDim2.new(0.5, 0, 0.5, 0)  -- Center of screen
+Button.AnchorPoint = Vector2.new(0.5, 0.5)
 Button.Text = "Toggle Invisibility"
 Button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 Button.TextColor3 = Color3.new(1,1,1)
 Button.Font = Enum.Font.SourceSansBold
 Button.TextSize = 24
+Button.Parent = ScreenGui
 
 local invisible = false
 
