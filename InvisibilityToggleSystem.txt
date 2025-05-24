@@ -1,0 +1,61 @@
+-- Roblox Invisibility System Script
+-- Make sure to insert a RemoteEvent named "ToggleInvisibility" inside ReplicatedStorage.
+
+-- 1. LocalScript (place inside StarterPlayer > StarterPlayerScripts)
+-- This script creates a button to toggle invisibility for the player
+
+-- Begin LocalScript
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local toggleEvent = ReplicatedStorage:WaitForChild("ToggleInvisibility")
+
+local player = Players.LocalPlayer
+
+-- Create GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "InvisibilityUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local button = Instance.new("TextButton")
+button.Name = "ToggleButton"
+button.Size = UDim2.new(0, 200, 0, 50)
+button.Position = UDim2.new(0.5, 0, 0.5, 0)
+button.AnchorPoint = Vector2.new(0.5, 0.5)
+button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 24
+button.Text = "Toggle Invisibility"
+button.Parent = screenGui
+
+local invisible = false
+
+button.MouseButton1Click:Connect(function()
+	invisible = not invisible
+	toggleEvent:FireServer(invisible)
+	button.Text = invisible and "Visible" or "Invisible"
+end)
+-- End LocalScript
+
+
+-- 2. Script (place inside ServerScriptService)
+-- This script listens to the RemoteEvent and hides/shows the player for all others
+
+-- Begin Server Script
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local toggleEvent = ReplicatedStorage:WaitForChild("ToggleInvisibility")
+
+toggleEvent.OnServerEvent:Connect(function(player, makeInvisible)
+    local character = player.Character
+    if not character then return end
+
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+            part.Transparency = makeInvisible and 1 or 0
+            part.CanCollide = not makeInvisible
+        elseif part:IsA("Decal") then
+            part.Transparency = makeInvisible and 1 or 0
+        end
+    end
+end)
+-- End Server Script
